@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be Mine Forever? 💕</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Dancing Script', cursive;
+            background: linear-gradient(135deg, #ffb3b3 0%, #ffcdb2 35%, #ffafcc 70%, #bde0fe 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .heart {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: #ff6b9d;
+            transform: rotate(-45deg);
+            animation: float 6s infinite linear;
+            opacity: 0.8;
+        }
+        .heart:before,
+        .heart:after {
+            content: '';
+            width: 18px;
+            height: 18px;
+            background: #ff6b9d;
+            border-radius: 50%;
+            position: absolute;
+        }
+        .heart:before { top: -9px; left: 0; }
+        .heart:after { left: 9px; top: 0; }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(-45deg) scale(0.6); opacity: 1; }
+            100% { transform: translateY(-120px) rotate(-45deg) scale(1.1); opacity: 0; }
+        }
+
+        #proposal {
+            text-align: center;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        h1 {
+            font-size: clamp(2.4rem, 6vw, 4rem);
+            color: #fff7f3;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.25);
+            margin-bottom: 0.5rem;
+            animation: titlePulse 2s infinite;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        .top-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sticker-container {
+            width: min(260px, 70vw);
+            filter: drop-shadow(0 10px 25px rgba(0,0,0,0.3));
+        }
+
+        .sticker-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 24px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        button {
+            padding: 1rem 2rem;
+            font-size: 1.5rem;
+            font-family: inherit;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            font-weight: 700;
+        }
+
+        #yes {
+            background: linear-gradient(45deg, #ff758f, #ffb3c6);
+            color: #fffdf7;
+        }
+        #yes:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(255,117,143,0.5);
+        }
+
+        #no {
+            background: linear-gradient(45deg, #f4d35e, #f6c453);
+            color: #4b3b2b;
+        }
+        #no:hover {
+            transform: translateY(1px) scale(0.96);
+        }
+
+        /* YES page centered + blurable */
+        #yes-page {
+            display: none;
+            text-align: center;
+            animation: fadeIn 1s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        #yes-page-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            transition: filter 0.3s ease;
+        }
+
+        #success-text {
+            font-size: clamp(2.2rem, 6vw, 3.4rem);
+            color: #fff7f3;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.25);
+            margin-bottom: 1.2rem;
+        }
+
+        .yes-blurred #yes-page-inner {
+            filter: blur(4px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        .gift-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .gift-btn {
+            font-size: 1.1rem;
+            padding: 0.7rem 1.4rem;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.85);
+            color: #b23a48;
+            box-shadow: 0 5px 14px rgba(0,0,0,0.15);
+        }
+        .gift-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Gift modals */
+        .gift-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+            padding: 1rem;
+        }
+        .gift-modal.active {
+            display: flex;
+        }
+        .gift-modal .gift-card,
+        .gift-modal .letter-wrapper,
+        .gift-modal .arriving-card,
+        .gift-modal .quiz-card {
+            max-width: 90vw;
+            width: 480px;
+        }
+
+        .gift-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 1rem;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+        }
+        .gift-card img {
+            width: 100%;
+            border-radius: 16px;
+            margin-bottom: 0.8rem;
+        }
+        .gift-card p {
+            font-size: 1.2rem;
+            color: #80314a;
+        }
+
+        /* Quiz card */
+        .quiz-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 1.2rem 1.4rem;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+            text-align: left;
+        }
+        .quiz-question {
+            font-size: 1.3rem;
+            color: #80314a;
+            margin-bottom: 0.8rem;
+        }
+        .quiz-options button {
+            display: block;
+            width: 100%;
+            margin-bottom: 0.4rem;
+            font-size: 1.1rem;
+            text-align: left;
+            padding: 0.6rem 0.8rem;
+            border-radius: 999px;
+            background: #ffe5ec;
+            color: #6a2240;
+            box-shadow: none;
+        }
+        .quiz-options button:hover {
+            transform: none;
+            background: #ffd0e0;
+        }
+        .quiz-feedback {
+            margin-top: 0.5rem;
+            font-size: 1.05rem;
+            color: #b23a48;
+        }
+        .quiz-nav {
+            margin-top: 0.8rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .quiz-nav button {
+            font-size: 1.1rem;
+            padding: 0.6rem 1.2rem;
+            background: #ff758f;
+            color: #fff;
+        }
+        .quiz-nav button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .quiz-result {
+            margin-top: 0.8rem;
+            font-size: 1.2rem;
+            color: #7c3f58;
+        }
+
+        /* Vintage letter */
+        .letter-wrapper {
+            display: flex;
+            justify-content: center;
+        }
+        .vintage-letter {
+            background: #f6e7c1;
+            background-image:
+                radial-gradient(circle at top left, rgba(255,255,255,0.4) 0, transparent 50%),
+                radial-gradient(circle at bottom right, rgba(195,155,107,0.3) 0, transparent 55%);
+            border-radius: 6px;
+            padding: 1.2rem 1.4rem;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+            border: 1px solid rgba(138,88,44,0.4);
+            max-height: 55vh;
+            overflow-y: auto;
+            transform: rotate(-1.3deg);
+        }
+        .vintage-letter-inner {
+            border: 1px dashed rgba(120,80,40,0.6);
+            padding: 0.9rem 1rem;
+        }
+        .vintage-letter h2 {
+            font-size: 1.6rem;
+            margin-bottom: 0.6rem;
+            color: #5a3a28;
+        }
+        .vintage-letter p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #5a3a28;
+            text-align: left;
+            margin-bottom: 0.6rem;
+        }
+
+        /* Arriving soon */
+        .arriving-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 18px;
+            padding: 1.2rem;
+            box-shadow: 0 10px 22px rgba(0,0,0,0.25);
+        }
+        .arriving-card h2 {
+            font-size: 1.7rem;
+            margin-bottom: 0.4rem;
+            color: #623659;
+        }
+        .arriving-card p {
+            font-size: 1.2rem;
+            color: #7c3f58;
+        }
+
+        #hearts {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="hearts"></div>
+
+    <!-- FIRST PAGE -->
+    <div id="proposal">
+        <div class="top-wrapper">
+            <div class="sticker-container">
+                <img src="uss.png" alt="Cute couple sticker">
+            </div>
+            <h1>Will you be mine forever? 💖</h1>
+        </div>
+
+        <div class="buttons">
+            <button id="yes">Yes 😍</button>
+            <button id="no">No</button>
+        </div>
+    </div>
+
+    <!-- YES PAGE CENTERED + GIFTS -->
+    <div id="yes-page">
+        <div id="yes-page-inner">
+            <h1 id="success-text">I knew you will say yes! I love you 💕</h1>
+
+            <p style="font-size:1.3rem; color:#fff7f3; margin-bottom:0.8rem;">
+                Here are three little gifts just for you:
+            </p>
+
+            <div class="gift-buttons">
+                <button class="gift-btn" data-gift="gift1">Quiz 🎁</button>
+                <button class="gift-btn" data-gift="gift2">Letter 💌</button>
+                <button class="gift-btn" data-gift="gift3">Gift ⏳</button>
+            </div>
+        </div>
+
+        <!-- Gift 1: QUIZ modal -->
+        <div id="gift1" class="gift-modal">
+            <div class="quiz-card">
+                <div id="quiz-question" class="quiz-question"></div>
+
+                <div id="quiz-options" class="quiz-options"></div>
+
+                <div id="quiz-feedback" class="quiz-feedback"></div>
+
+                <div class="quiz-nav">
+                    <button id="quiz-next" disabled>Next ➜</button>
+                </div>
+
+                <div id="quiz-result" class="quiz-result"></div>
+            </div>
+        </div>
+
+        <!-- Gift 2: LETTER modal -->
+        <div id="gift2" class="gift-modal">
+            <div class="letter-wrapper">
+                <div class="vintage-letter">
+                    <div class="vintage-letter-inner">
+                        <h2>My Little Letter To You</h2>
+                        <p>Hieee Loveee</p>
+                       <p>
+                            Happy first Valentine's week to uss!💖 And I want to tell you something Tu na thoda thoda sa acha lagta hai mujhe 👉🏻👈🏻
+                        </p>
+                        <p>
+                            So as you committed that you are going to stay with me forever so this is taken as your final confirmation and no backouts further will be permitted!
+                            And I love youu thoda bahut!💖
+                        </p>
+                        <p style="margin-top:0.8rem;">
+                            Your Baccha,<br>
+                            <span style="font-style:italic;"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gift 3: ARRIVING SOON modal -->
+        <div id="gift3" class="gift-modal">
+            <div class="arriving-card">
+                <h2>You will get on wednesday</h2>
+                <p>
+                    
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Floating hearts
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            document.getElementById('hearts').appendChild(heart);
+            setTimeout(() => heart.remove(), 6000);
+        }
+        setInterval(createHeart, 350);
+
+        let noClicks = 0;
+        const noTexts = ['Think again?', 'Are you sure?', 'Please!! 😢'];
+        const yesWidths = ['220px', '320px', '480px', '100vw'];
+
+        const proposal = document.getElementById('proposal');
+        const yesBtn = document.getElementById('yes');
+        const noBtn = document.getElementById('no');
+        const yesPage = document.getElementById('yes-page');
+        const buttonsContainer = document.querySelector('.buttons');
+
+        function setupButtonsLayout() {
+            buttonsContainer.style.display = 'flex';
+            buttonsContainer.style.justifyContent = 'center';
+            buttonsContainer.style.alignItems = 'center';
+            buttonsContainer.style.gap = '1.5rem';
+        }
+        setupButtonsLayout();
+
+        noBtn.addEventListener('click', () => {
+            noClicks++;
+
+            if (noClicks - 1 < noTexts.length) {
+                noBtn.textContent = noTexts[noClicks - 1];
+            }
+
+            const step = Math.min(noClicks - 1, yesWidths.length - 1);
+            yesBtn.style.width = yesWidths[step];
+            yesBtn.style.fontSize = step < 3 ? '1.6rem' : '2rem';
+            yesBtn.style.padding = step < 3 ? '1rem 2.2rem' : '1.4rem 2.4rem';
+
+            if (noClicks >= 4) {
+                proposal.style.display = 'flex';
+                proposal.style.flexDirection = 'column';
+                proposal.style.justifyContent = 'center';
+                proposal.style.alignItems = 'center';
+
+                yesBtn.style.width = '100vw';
+                yesBtn.style.height = '100vh';
+                yesBtn.style.position = 'fixed';
+                yesBtn.style.top = '0';
+                yesBtn.style.left = '0';
+                yesBtn.style.borderRadius = '0';
+                yesBtn.style.zIndex = '100';
+                yesBtn.style.boxShadow = 'none';
+
+                noBtn.style.display = 'none';
+            }
+        });
+
+        yesBtn.addEventListener('click', () => {
+            proposal.style.display = 'none';
+            yesPage.style.display = 'block';
+        });
+
+        // Gift buttons: open modal + blur background
+        const giftButtons = document.querySelectorAll('.gift-btn');
+        const giftModals = document.querySelectorAll('.gift-modal');
+
+        giftButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-gift');
+
+                yesPage.classList.add('yes-blurred');
+
+                giftModals.forEach(modal => {
+                    modal.classList.toggle('active', modal.id === targetId);
+                });
+            });
+        });
+
+        // Close modal when clicking outside inner content
+        giftModals.forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    yesPage.classList.remove('yes-blurred');
+                    resetQuiz();
+                }
+            });
+        });
+
+        // QUIZ LOGIC
+        const quizData = [
+            {
+                question: 'Who is the absolute "Boss" in the relationship?',
+                options: ['Obviously you', 'Me', 'We both are equal'],
+                correctIndex: 0
+            },
+            {
+                question: 'Who has more mood swings?',
+                options: ['Obviously you', 'Me', 'Dholu Bholu'],
+                correctIndex: 2
+            },
+            {
+                question: 'Where do I plan rest of my life?',
+                options: ['On earth', 'On moon', 'In your heart'],
+                correctIndex: 2
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+
+        const quizQuestionEl = document.getElementById('quiz-question');
+        const quizOptionsEl = document.getElementById('quiz-options');
+        const quizFeedbackEl = document.getElementById('quiz-feedback');
+        const quizNextBtn = document.getElementById('quiz-next');
+        const quizResultEl = document.getElementById('quiz-result');
+
+        function loadQuestion() {
+            const q = quizData[currentQuestionIndex];
+            quizQuestionEl.textContent = (currentQuestionIndex + 1) + '. ' + q.question;
+            quizOptionsEl.innerHTML = '';
+            quizFeedbackEl.textContent = '';
+            quizNextBtn.disabled = true;
+            quizNextBtn.textContent = currentQuestionIndex === quizData.length - 1 ? 'Submit' : 'Next ➜';
+            quizResultEl.textContent = '';
+
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.textContent = opt;
+                btn.addEventListener('click', () => handleOptionClick(index));
+                quizOptionsEl.appendChild(btn);
+            });
+        }
+
+        function handleOptionClick(index) {
+            const q = quizData[currentQuestionIndex];
+            if (index === q.correctIndex) {
+                quizFeedbackEl.textContent = 'Yay! Correct answer 😍';
+                quizNextBtn.disabled = false;
+            } else {
+                quizFeedbackEl.textContent = 'Oops, try again 💔';
+                quizNextBtn.disabled = true;
+            }
+        }
+
+        quizNextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < quizData.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                // Finished quiz
+                quizQuestionEl.textContent = 'Result';
+                quizOptionsEl.innerHTML = '';
+                quizFeedbackEl.textContent = '';
+                quizNextBtn.style.display = 'none';
+                quizResultEl.innerHTML = 'Your score: ∞ / 3<br>Omg you are so genius, I love you! 💖';
+            }
+        });
+
+        function resetQuiz() {
+            currentQuestionIndex = 0;
+            quizNextBtn.style.display = 'inline-block';
+            loadQuestion();
+        }
+
+        // When quiz modal opens, initialise quiz
+        const quizModal = document.getElementById('gift1');
+        const observer = new MutationObserver(() => {
+            if (quizModal.classList.contains('active')) {
+                resetQuiz();
+            }
+        });
+        observer.observe(quizModal, { attributes: true, attributeFilter: ['class'] });
+    </script>
+</body>
+</html>
